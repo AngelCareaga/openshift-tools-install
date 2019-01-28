@@ -1,0 +1,15 @@
+#!/bin/bash
+
+## Load configurations
+. "utils/parse_yaml.sh"
+eval $(parse_yaml config-ocp-tools.yml "cfg_")
+
+echo $cfg_username_subscription
+
+#
+if [ $cfg_satellite_subs = "true" ]; then
+    #sh satellite-provider/configure_bastion_satellite.sh
+    else
+    #sh subscription-provider/configure_bastion_subscription.sh
+fi
+

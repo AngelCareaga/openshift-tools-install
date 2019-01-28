@@ -1,0 +1,28 @@
+##If the subscriptions in managed by Satellite, is TRUE
+satellite_subs: true
+path_inventory: "/home/nuup-user1/Documentos/Openshift/3.9/inventory-nfs-lab"
+
+
+##FOR NON-SATELLITE
+username_subscription: "username"
+password_subscription: "password"
+pool_id_subscription: "pool-id"
+
+##FOR SATELLITE
+url_package_satellite: "http://satellite-server-vm.us-east1-b.c.ocp-nuup.internal/pub/katello-ca-consumer-latest.noarch.rpm"
+org_name_satellite: "initial_organization_prueba"
+act_ket_satellite: "openshift-key"
+install_agent_satellite: "true"
+
+##Copy rsa option
+copy_rsa_by_inventory: "true"
+
+##GENERATE LIST HOST IN Inventory
+generate_host_list: false
+path_host_ip_list: "host-ip-list"
+
+##List IP MANUAL For copy rsa | ONLY if cfg_copy_rsa_by_inventory is set to false
+list_ip: "bastion.us-east1-b.c.ocp-nuup.internal;bastion.us-east1-b.c.ocp-nuup.internal;master1.us-east1-b.c.ocp-nuup.internal"
+
+##CONFIGURE NODES
+configure_nodes: "false"

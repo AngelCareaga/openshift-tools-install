@@ -1,0 +1,148 @@
+---
+- hosts: masters, nodes, infras
+  vars_files:
+    - config-ocp-tools.yml
+  tasks:
+    - name: Limpiando suscripciones
+      shell: |
+        subscription-manager remove --all
+        subscription-manager clean
+        rpm -Uvh {{ satellite_url_package }} --force
+        subscription-manager register --org="{{ satellite_org_name }}" --activationkey="{{ satellite_org_activation_key }}"
+      vars: 
+        satellite_url_package: "{{ url_package_satellite }}"
+        satellite_org_name: "{{ org_name_satellite }}"
+        satellite_org_activation_key: "{{ act_ket_satellite }}"
+    - name: Instalando paquetes para satellite
+      yum:
+        name: "katello-agent"
+    - name: Habilitando servicio goferd para satellite
+      shell: |
+        systemctl start goferd
+        systemctl enable goferd
+    - name: Desabilitando repositorios de más
+      shell: |
+        subscription-manager repos --disable="*"
+    - name: Habilitando repositorios adecuados
+      shell: |
+        subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms" --enable="rhel-7-server-ose-3.9-rpms" --enable="rhel-7-fast-datapath-rpms" --enable="rhel-7-server-ansible-2.4-rpms"
+    - name: Verificando actualizaciones (yum)
+      yum: list=updates update_cache=true
+      register: yumoutput
+    - name: Actuaizando paquetes
+      yum:
+        name: '*'
+        state: latest
+    - name: Instalando paquetes
+      yum:
+        name: "{{ packages }}"
+      vars:
+        packages:
+        - nfs-utils
+        - wget
+        - git
+        - net-tools
+        - bind-utils
+        - yum-utils
+        - iptables-services
+        - bridge-utils
+        - bash-completion
+        - kexec-tools
+        - sos
+        - psacct
+        - nano
+        - atomic-openshift-utils 
+        - docker-1.13.1
+    - name: Configurando Docker (1-3)
+      shell: |
+        rpm -V docker-1.13.1
+    - name: Configurando Docker (2-3)
+      shell:
+        cmd: |
+          cat > /etc/sysconfig/docker-storage-setup << EOF
+          DEVS=/dev/sdb
+          VG=docker-vg
+          EOF
+    - name: Configurando Docker (3-3)
+      shell: |
+        docker-storage-setup
+        systemctl enable docker
+        systemctl start docker
+        systemctl is-active docker
+
+- hosts: lb
+  tasks:
+    - name: Limpiando suscripciones
+      shell: |
+        subscription-manager remove --all
+        subscription-manager clean
+        rpm -Uvh {{ satellite_url_package }} --force
+        subscription-manager register --org="{{ satellite_org_name }}" --activationkey="{{ satellite_org_activation_key }}"
+      vars: 
+        satellite_url_package: "{{ url_package_satellite }}"
+        satellite_org_name: "{{ org_name_satellite }}"
+        satellite_org_activation_key: "{{ act_ket_satellite }}"
+    - name: Instalando paquetes para satellite
+      yum:
+        name: "katello-agent"
+    - name: Habilitando servicio goferd para satellite
+      shell: |
+        systemctl start goferd
+        systemctl enable goferd
+    - name: Desabilitando repositorios de más
+      shell: |
+        subscription-manager repos --disable="*"
+    - name: Habilitando repositorios adecuados
+      shell: |
+        subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms" --enable="rhel-7-server-ose-3.9-rpms" --enable="rhel-7-fast-datapath-rpms" --enable="rhel-7-server-ansible-2.4-rpms"
+    - name: Verificando actualizaciones (yum)
+      yum: list=updates update_cache=true
+      register: yumoutput
+    - name: Actuaizando paquetes
+      yum:
+        name: '*'
+        state: latest
+
+- hosts: nfs
+  tasks:
+    - name: Limpiando suscripciones
+      shell: |
+        subscription-manager remove --all
+        subscription-manager clean
+        rpm -Uvh {{ satellite_url_package }} --force
+        subscription-manager register --org="{{ satellite_org_name }}" --activationkey="{{ satellite_org_activation_key }}"
+      vars: 
+        satellite_url_package: "{{ url_package_satellite }}"
+        satellite_org_name: "{{ org_name_satellite }}"
+        satellite_org_activation_key: "{{ act_ket_satellite }}"
+    - name: Instalando paquetes para satellite
+      yum:
+        name: "katello-agent"
+    - name: Habilitando servicio goferd para satellite
+      shell: |
+        systemctl start goferd
+        systemctl enable goferd
+    - name: Desabilitando repositorios de más
+      shell: |
+        subscription-manager repos --disable="*"
+    - name: Habilitando repositorios adecuados
+      shell: |
+        subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms"
+    - name: Verificando actualizaciones (yum)
+      yum: list=updates update_cache=true
+      register: yumoutput
+    - name: Actuaizando paquetes
+      yum:
+        name: '*'
+        state: latest
+    - name: Instalando paquetes
+      yum:
+        name: "{{ packages }}"
+      vars:
+        packages:
+        - nfs-utils
+        - rpcbind
+    - name: Habilitando repositorios adecuados
+      shell: |
+        subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms"
+...

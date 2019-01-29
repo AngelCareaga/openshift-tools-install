@@ -26,3 +26,6 @@ list_ip: "bastion.us-east1-b.c.ocp-nuup.internal;bastion.us-east1-b.c.ocp-nuup.i
 
 ##CONFIGURE NODES
 configure_nodes: "false"
+
+## CONFIGURE SEGMENTED
+configure_only_bastion: "true"

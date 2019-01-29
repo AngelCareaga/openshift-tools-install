@@ -33,15 +33,21 @@ subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server
 yum -y update
 yum -y install atomic-openshift-utils
 
-## Certificates
+if [ $cfg_configure_only_bastion == "true" ]; then
+    echo "Bastion configured correctly"
+    else
+    echo "Configure bastion connections rsa to nodes"
 
-ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+    ## Certificates
+    ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
 
+    ## Include util copy rsa
+    . "util/copy_rsa_hosts.sh"
 
-## Include util copy rsa
-. "util/copy_rsa_hosts.sh"
-
-## Call function
-if [ $copy_rsa_by_inventory == "true" ]; then
-    copyRSAByInventory
+    ## Call function
+    if [ $copy_rsa_by_inventory == "true" ]; then
+        copyRSAByInventory
+        else
+        copyRSAByList
+    fi
 fi

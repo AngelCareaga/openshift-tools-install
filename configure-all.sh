@@ -4,6 +4,7 @@
 echo " ======= LOADING CONFIGURATIONS ======"
 . "utils/parse_yaml.sh"
 eval $(parse_yaml config-ocp-tools.yml "cfg_")
+. "utils/copy_rsa_hosts.sh"
 
 cfg_configure_only_bastion=false
 

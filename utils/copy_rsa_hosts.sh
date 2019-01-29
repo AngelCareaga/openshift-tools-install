@@ -17,11 +17,10 @@ copyRSA(){
         ## Certificates
         ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
 
-        ## Include util copy rsa
-        . "util/copy_rsa_hosts.sh"
+        echo "Copy rsa to nodes"
 
         ## Call function
-        if [ $copy_rsa_by_inventory == "true" ]; then
+        if [ $cfg_copy_rsa_by_inventory == "true" ]; then
             copyRSAByInventory
             else
             copyRSAByList
@@ -29,14 +28,18 @@ copyRSA(){
     fi
 }
 
+
+## BETAA
 copyRSAByInventory() {
+    
     # Exp for validate host and domain
     validIpAddressRegex="^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$";
     validHostnameRegex="^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$";
 
     # If file exists 
     read_vars="false"
-    if [[ -f "$path_inventory" ]]; then
+    if [[ -f "$cfg_path_inventory" ]]; then
+        createTempFilePassByConf
         while IFS= read host_line
         do
             ## Declare the host after the "[OSEv3:vars]"
@@ -45,16 +48,35 @@ copyRSAByInventory() {
             fi
             if [ $read_vars == "true" ]; then
                 if [[ $host_line =~ $validIpAddressRegex || $host_line =~ $validHostnameRegex ]]; then
-                    echo $host_line >> path_host_ip_list
+                    echo "Valid: $host_line"
+                    sshpass -f password.txt ssh-copy-id -f -i ~/.ssh/id_rsa.pub -o StrictHostKeyChecking=no root@$host_line
                 fi
             fi
-        done <"$file"
+        done <"$cfg_path_inventory"
+        else 
+        echo -e "\e[91mInventory not found, verify config path"
+        echo -e "\e[39m"
+        abortOnError
+        deteteTemFilePassByConf
     fi
 }
 
 copyRSAByList(){
     ## declare an array variable
+    createTempFilePassByConf
     IFS=';' read -r -a listHostAndIP <<< "$cfg_list_ip"
-    for host in "$listHostAndIP[@]"
-    ; do ssh-copy-id -i ~/.ssh/id_rsa.pub $host; done
+    for host in "${listHostAndIP[@]}"
+    do
+        sshpass -f password.txt ssh-copy-id -f -i ~/.ssh/id_rsa.pub -o StrictHostKeyChecking=no root@$host
+    done
+    deteteTemFilePassByConf
+}
+
+createTempFilePassByConf(){
+    touch password.txt
+    echo "$cfg_password_nodes" > "password.txt"
+}
+
+deteteTemFilePassByConf(){
+    rm -f "password.txt"
 }

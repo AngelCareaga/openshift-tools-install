@@ -1,7 +1,7 @@
 ---
 - hosts: masters, nodes, infras
   vars_files:
-    - config-ocp-tools.yml
+    - ../config-ocp-tools.yml
   tasks:
     - name: Limpiando suscripciones
       shell: |
@@ -61,7 +61,7 @@
         docker-storage-setup
         systemctl enable docker
         systemctl start docker
-        systemctl is-active docker
+        
 - hosts: lb
   tasks:
     - name: Limpiando suscripciones

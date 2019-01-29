@@ -1,6 +1,6 @@
 ##If the subscriptions in managed by Satellite, is TRUE
 satellite_subs: true
-path_inventory: "/home/nuup-user1/Documentos/Openshift/3.9/inventory-nfs-lab"
+path_inventory: "/root/inventory"
 
 
 ##FOR NON-SATELLITE
@@ -15,14 +15,15 @@ act_ket_satellite: "openshift-key"
 install_agent_satellite: "true"
 
 ##Copy rsa option
-copy_rsa_by_inventory: "true"
+copy_rsa_by_inventory: "false"
 
 ##GENERATE LIST HOST IN Inventory
 generate_host_list: false
 path_host_ip_list: "host-ip-list"
 
 ##List IP MANUAL For copy rsa | ONLY if cfg_copy_rsa_by_inventory is set to false
-list_ip: "bastion.us-east1-b.c.ocp-nuup.internal;bastion.us-east1-b.c.ocp-nuup.internal;master1.us-east1-b.c.ocp-nuup.internal"
+list_ip: "nfs.europe-west2-c.c.ocp-nuup.internal;lb.europe-west1-b.c.ocp-nuup.internal;master1.europe-west1-b.c.ocp-nuup.internal;node1.europe-north1-a.c.ocp-nuup.internal;infra1.asia-southeast1-b.c.ocp-nuup.internal"
 
 ##CONFIGURE NODES
 configure_nodes: "false"
+password_nodes: "r3dh4t1!"

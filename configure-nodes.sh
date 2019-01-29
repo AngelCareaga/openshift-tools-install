@@ -4,9 +4,10 @@
 echo " ======= LOADING CONFIGURATIONS ======"
 . "utils/parse_yaml.sh"
 eval $(parse_yaml config-ocp-tools.yml "cfg_")
-. "copy_rsa_hosts.sh"
+. "utils/copy_rsa_hosts.sh"
+. "utils/generals.sh"
 
-cfg_configure_only_bastion=true
+cfg_configure_only_bastion=false
 
 echo " ======= CONFIGURE ========"
 
@@ -14,11 +15,15 @@ echo " ======= CONFIGURE ========"
 copyRSA
 
 # If file exists 
-if [[ -f "$path_inventory" ]]; then
-    echo "\e[92mInstall pre-prerequisites nodes; subscription, packages, configure docker, nfs..."
+if [[ -f "$cfg_path_inventory" ]]; then
+    echo -e "\e[92mInstall pre-prerequisites nodes; subscription, packages, configure docker, nfs..."
     if [ $cfg_satellite_subs = "true" ]; then
-        ansible-playbook -i $path_inventory satellite-provider/install_prerrequisitos_nodes_satellite.yml
+        ansible-playbook -i $cfg_path_inventory satellite-provider/install_prerrequisitos_nodes_satellite.yml
         else
-        ansible-playbook -i $path_inventory subscription-provider/install_prerrequisitos_nodes_subscription.yml
+        ansible-playbook -i $cfg_path_inventory subscription-provider/install_prerrequisitos_nodes_subscription.yml
     fi
+    else 
+        abortOnEecho -e "\e[91mInventory not found, verify config path"
+        echo -e "\e[39m"
+        abortOnErrorrror
 fi

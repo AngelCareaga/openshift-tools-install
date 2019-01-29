@@ -68,8 +68,9 @@
         docker-storage-setup
         systemctl enable docker
         systemctl start docker
-
 - hosts: lb
+  vars_files:
+    - ../config-ocp-tools.yml
   tasks:
     - name: Limpiando suscripciones
       shell: |
@@ -101,8 +102,9 @@
       yum:
         name: '*'
         state: latest
-
 - hosts: nfs
+  vars_files:
+    - ../config-ocp-tools.yml
   tasks:
     - name: Limpiando suscripciones
       shell: |
@@ -141,7 +143,32 @@
         packages:
         - nfs-utils
         - rpcbind
-    - name: Habilitando repositorios adecuados
+    - name: Creando carpetas registry, logging, metrics
       shell: |
-        subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms"
+        mkdir -p /var/export/registry
+        mkdir -p /var/export/logging
+        mkdir -p /var/export/metrics
+        chown -R nfsnobody:nfsnobody /var/export/
+        chmod -R 700 /var/export/
+    - name: Configurando NFS (1/3)
+      shell: |
+        setsebool -P virt_use_nfs=true
+        setsebool -P virt_sandbox_use_nfs=true
+        firewall-cmd --reload
+        chown -R nfsnobody:nfsnobody /var/export/
+        chmod -R 700 /var/export/
+    - name: Configurando NFS (2/3)
+      shell:
+        cmd: |
+          cat > /etc/exports.d/ocp.exports << EOF
+          /var/export/metrics *(rw,async,root_squash)
+          /var/export/registry *(rw,async,root_squash)
+          /var/export/logging *(rw,async,root_squash)
+          EOF
+    - name: Configurando NFS (3/3)
+      shell:
+        cmd: |
+          exportfs -a
+          systemctl restart nfs-server.service nfs.service
+          showmount -e
 ...

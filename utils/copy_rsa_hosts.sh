@@ -8,6 +8,27 @@ path_inventory=$cfg_path_inventory
 
 ## ================= Functions for RSA ================= #
 
+copyRSA(){
+    if [ $cfg_configure_only_bastion == "true" ]; then
+        echo "Bastion configured correctly"
+        else
+        echo "Configure bastion connections rsa to nodes"
+
+        ## Certificates
+        ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+
+        ## Include util copy rsa
+        . "util/copy_rsa_hosts.sh"
+
+        ## Call function
+        if [ $copy_rsa_by_inventory == "true" ]; then
+            copyRSAByInventory
+            else
+            copyRSAByList
+        fi
+    fi
+}
+
 copyRSAByInventory() {
     # Exp for validate host and domain
     validIpAddressRegex="^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$";

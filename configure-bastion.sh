@@ -4,8 +4,9 @@
 echo " ======= LOADING CONFIGURATIONS ======"
 . "utils/parse_yaml.sh"
 eval $(parse_yaml config-ocp-tools.yml "cfg_")
+. "copy_rsa_hosts.sh"
 
-cfg_configure_only_bastion=false
+cfg_configure_only_bastion=true
 
 echo " ======= CONFIGURE ========"
 #Evaluate if use Satellite or direct
@@ -14,4 +15,3 @@ if [ $cfg_satellite_subs = "true" ]; then
     else
     sh subscription-provider/configure_bastion_subscription.sh
 fi
-

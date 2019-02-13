@@ -26,4 +26,4 @@ list_ip: "nfs.europe-west2-c.c.ocp-nuup.internal;lb.europe-west1-b.c.ocp-nuup.in
 
 ##CONFIGURE NODES
 configure_nodes: "false"
-password_nodes: "r3dh4t1!"
+password_nodes: "node_pass!"

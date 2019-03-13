@@ -1,5 +1,5 @@
 ---
-- hosts: masters, nodes, infras
+- hosts: masters, nodes, infras, new_nodes
   vars_files:
     - ../config-ocp-tools.yml
   tasks:

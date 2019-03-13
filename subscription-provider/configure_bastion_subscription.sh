@@ -3,6 +3,7 @@
 ## Load configurations
 . "utils/parse_yaml.sh"
 eval $(parse_yaml config-ocp-tools.yml "cfg_")
+. "utils/copy_rsa_hosts.sh"
 
 ## =============== SETTING CONFIGURATION ============== ##
 

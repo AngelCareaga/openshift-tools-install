@@ -9,9 +9,9 @@ password_subscription: "password"
 pool_id_subscription: "pool-id"
 
 ##FOR SATELLITE
-url_package_satellite: "http://satellite-server-vm.us-east1-b.c.ocp-nuup.internal/pub/katello-ca-consumer-latest.noarch.rpm"
+url_package_satellite: "http://satellite-server64.asia-east1-b.c.oc-nuup-ac-234223.internal/pub/katello-ca-consumer-latest.noarch.rpm"
 org_name_satellite: "initial_organization_prueba"
-act_ket_satellite: "openshift-key"
+act_key_satellite: "ocp311-key-activation"
 install_agent_satellite: "true"
 
 ##Copy rsa option
@@ -22,8 +22,11 @@ generate_host_list: false
 path_host_ip_list: "host-ip-list"
 
 ##List IP MANUAL For copy rsa | ONLY if cfg_copy_rsa_by_inventory is set to false
-list_ip: "nfs.europe-west2-c.c.ocp-nuup.internal;lb.europe-west1-b.c.ocp-nuup.internal;master1.europe-west1-b.c.ocp-nuup.internal;node1.europe-north1-a.c.ocp-nuup.internal;infra1.asia-southeast1-b.c.ocp-nuup.internal"
+list_ip: "nfs.asia-east2-a.c.oc-nuup-ac-234223.internal;node1.us-east1-b.c.oc-nuup-ac-234223.internal;node2.us-east1-b.c.oc-nuup-ac-234223.internal;infra1.us-east1-b.c.oc-nuup-ac-234223.internal;infra2.us-east1-b.c.oc-nuup-ac-234223.internal;lb.europe-north1-a.c.oc-nuup-ac-234223.internal;master1.us-east1-b.c.oc-nuup-ac-234223.internal"
 
 ##CONFIGURE NODES
 configure_nodes: "false"
-password_nodes: "node_pass!"
+password_nodes: "r3dh4t1!"
+
+#OPENSHIFT OPTIONS
+ocp_is_gluster: "false"

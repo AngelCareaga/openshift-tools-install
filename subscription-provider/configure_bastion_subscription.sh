@@ -30,9 +30,10 @@ subscription-manager list --consumed
 subscription-manager repos --disable="*"
 
 ## Repos & packages ansible
-subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms" --enable="rhel-7-server-ose-3.9-rpms" --enable="rhel-7-fast-datapath-rpms" --enable="rhel-7-server-ansible-2.4-rpms"
+subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms" --enable="rhel-7-server-ose-3.11-rpms" --enable="rhel-7-fast-datapath-rpms" --enable="rhel-7-server-ansible-2.6-rpms"
 yum -y update
-yum -y install atomic-openshift-utils
+yum -y remove atomic-openshift-utils
+yum -y install openshift-ansible
 
 ## Copy RSA to nodes
 copyRSA

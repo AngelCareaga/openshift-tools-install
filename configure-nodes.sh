@@ -16,11 +16,19 @@ copyRSA
 
 # If file exists 
 if [[ -f "$cfg_path_inventory" ]]; then
-    echo -e "\e[92mInstall pre-prerequisites nodes; subscription, packages, configure docker, nfs..."
+    echo -e "\e[92mInstall pre-prerequisites nodes; subscription, packages, configure docker, nfs, gluster...\e[39m"
     if [ $cfg_satellite_subs = "true" ]; then
-        ansible-playbook -i $cfg_path_inventory satellite-provider/install_prerrequisitos_nodes_satellite.yml
+        if [ $cfg_ocp_is_gluster = "true" ]; then
+            ansible-playbook -i $cfg_path_inventory satellite-provider/install_prerrequisitos_nodes_satellite_gluster.yml
+            else
+            ansible-playbook -i $cfg_path_inventory satellite-provider/install_prerrequisitos_nodes_satellite.yml
+        fi
         else
-        ansible-playbook -i $cfg_path_inventory subscription-provider/install_prerrequisitos_nodes_subscription.yml
+        if [ $cfg_ocp_is_gluster = "true" ]; then
+            ansible-playbook -i $cfg_path_inventory subscription-provider/install_prerrequisitos_nodes_subscription_gluster.yml
+            else
+            ansible-playbook -i $cfg_path_inventory subscription-provider/install_prerrequisitos_nodes_subscription.yml
+        fi
     fi
     else 
         abortOnEecho -e "\e[91mInventory not found, verify config path"

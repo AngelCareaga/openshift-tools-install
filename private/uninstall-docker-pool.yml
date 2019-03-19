@@ -3,7 +3,7 @@
   vars_files:
     - ../config-ocp-tools.yml
   tasks:
-    - name: Habilitando repositorios adecuados
+    - name: Eliminando configuraciones docker-storage
       shell: |
         rm -rf /etc/sysconfig/docker-storage-setup
         rm -rf /etc/sysconfig/docker-storage

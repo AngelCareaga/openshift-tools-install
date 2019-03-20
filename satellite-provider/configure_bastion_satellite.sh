@@ -42,5 +42,11 @@ yum -y update
 yum -y remove atomic-openshift-utils
 yum -y install openshift-ansible
 
+if [ "$cfg_ocp_is_gluster" == "true" ]; then
+    subscription-manager repos --enable="rh-gluster-3-client-for-rhel-7-server-rpms"
+    yum install -y glusterfs glusterfs-fuse
+    yum update -y glusterfs-fuse glusterfs 
+fi
+
 ## Copy RSA to nodes
 copyRSA

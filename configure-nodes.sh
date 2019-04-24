@@ -17,7 +17,7 @@ copyRSA
 # If file exists 
 if [[ -f "$cfg_path_inventory" ]]; then
     echo -e "\e[92mInstall pre-prerequisites nodes; subscription, packages, configure docker, nfs..."
-    if [ $cfg_satellite_subs = "true" ]; then
+    if [ "$cfg_satellite_subs" == "true" ]; then
         ansible-playbook -i $cfg_path_inventory satellite-provider/install_prerrequisitos_nodes_satellite.yml
         else
         ansible-playbook -i $cfg_path_inventory subscription-provider/install_prerrequisitos_nodes_subscription.yml

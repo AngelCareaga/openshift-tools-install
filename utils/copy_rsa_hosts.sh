@@ -9,7 +9,7 @@ path_inventory=$cfg_path_inventory
 ## ================= Functions for RSA ================= #
 
 copyRSA(){
-    if [ $cfg_configure_only_bastion == "true" ]; then
+    if [  "$cfg_configure_only_bastion" == "true" ]; then
         echo "Bastion configured correctly"
         else
         echo "Configure bastion connections rsa to nodes"
@@ -20,7 +20,7 @@ copyRSA(){
         echo "Copy rsa to nodes"
 
         ## Call function
-        if [ $cfg_copy_rsa_by_inventory == "true" ]; then
+        if [ "$cfg_copy_rsa_by_inventory" == "true" ]; then
             copyRSAByInventory
             else
             copyRSAByList
@@ -46,7 +46,7 @@ copyRSAByInventory() {
             if [[ $host_line == "[OSEv3:vars]" ]]; then
                 read_vars="true"
             fi
-            if [ $read_vars == "true" ]; then
+            if [ "$read_vars" == "true" ]; then
                 if [[ $host_line =~ $validIpAddressRegex || $host_line =~ $validHostnameRegex ]]; then
                     echo "Valid: $host_line"
                     sshpass -f password.txt ssh-copy-id -f -i ~/.ssh/id_rsa.pub -o StrictHostKeyChecking=no root@$host_line

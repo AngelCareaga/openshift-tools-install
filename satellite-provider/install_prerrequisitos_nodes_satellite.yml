@@ -29,7 +29,7 @@
     - name: Verificando actualizaciones (yum)
       yum: list=updates update_cache=true
       register: yumoutput
-    - name: Actuaizando paquetes
+    - name: Actualizando paquetes
       yum:
         name: '*'
         state: latest
@@ -98,7 +98,7 @@
     - name: Verificando actualizaciones (yum)
       yum: list=updates update_cache=true
       register: yumoutput
-    - name: Actuaizando paquetes
+    - name: Actualizando paquetes
       yum:
         name: '*'
         state: latest
@@ -132,7 +132,7 @@
     - name: Verificando actualizaciones (yum)
       yum: list=updates update_cache=true
       register: yumoutput
-    - name: Actuaizando paquetes
+    - name: Actualizando paquetes
       yum:
         name: '*'
         state: latest

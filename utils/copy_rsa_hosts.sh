@@ -9,7 +9,7 @@ path_inventory=$cfg_path_inventory
 ## ================= Functions for RSA ================= #
 
 copyRSA(){
-    if [  "$cfg_configure_only_bastion" == "true" ]; then
+    if [ "$cfg_configure_only_bastion" == "true" ]; then
         echo "Bastion configured correctly"
         else
         echo "Configure bastion connections rsa to nodes"

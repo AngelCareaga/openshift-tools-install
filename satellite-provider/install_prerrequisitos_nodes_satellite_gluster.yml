@@ -29,7 +29,7 @@
         subscription-manager repos --disable="*"
     - name: Habilitando repositorios adecuados
       shell: |
-        subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms" --enable="rhel-7-server-ose-3.9-rpms" --enable="rhel-7-fast-datapath-rpms" --enable="rhel-7-server-ansible-2.4-rpms"
+        subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms" --enable="rhel-7-server-ose-3.11-rpms" --enable="rhel-7-fast-datapath-rpms" --enable="rhel-7-server-ansible-2.6-rpms" --enable="rh-gluster-3-client-for-rhel-7-server-rpms"
     - name: Verificando actualizaciones (yum)
       yum: list=updates update_cache=true
       register: yumoutput
@@ -42,7 +42,6 @@
         name: "{{ packages }}"
       vars:
         packages:
-        - nfs-utils
         - wget
         - git
         - net-tools
@@ -55,8 +54,12 @@
         - sos
         - psacct
         - nano
-        - atomic-openshift-utils 
+        - telnet
+        - screen
+        - openshift-ansible 
         - docker-1.13.1
+        - glusterfs
+        - glusterfs-fuse
     - name: Configurando Docker (1-3)
       shell: |
         rpm -V docker-1.13.1
@@ -72,6 +75,10 @@
         docker-storage-setup
         systemctl enable docker
         systemctl start docker
+    - name: Actualizando paquetes
+      yum:
+        name: '*'
+        state: latest
 - hosts: lb
   vars_files:
     - ../config-ocp-tools.yml
@@ -98,7 +105,7 @@
         subscription-manager repos --disable="*"
     - name: Habilitando repositorios adecuados
       shell: |
-        subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms" --enable="rhel-7-server-ose-3.9-rpms" --enable="rhel-7-fast-datapath-rpms" --enable="rhel-7-server-ansible-2.4-rpms"
+        subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms" --enable="rhel-7-server-ose-3.9-rpms" --enable="rhel-7-fast-datapath-rpms" --enable="rhel-7-server-ansible-2.4-rpms" --enable="rh-gluster-3-client-for-rhel-7-server-rpms"
     - name: Verificando actualizaciones (yum)
       yum: list=updates update_cache=true
       register: yumoutput
@@ -106,73 +113,4 @@
       yum:
         name: '*'
         state: latest
-- hosts: nfs
-  vars_files:
-    - ../config-ocp-tools.yml
-  tasks:
-    - name: Limpiando suscripciones
-      shell: |
-        subscription-manager remove --all
-        subscription-manager clean
-        rpm -Uvh {{ satellite_url_package }} --force
-        subscription-manager register --org="{{ satellite_org_name }}" --activationkey="{{ satellite_org_activation_key }}"
-      vars: 
-        satellite_url_package: "{{ url_package_satellite }}"
-        satellite_org_name: "{{ org_name_satellite }}"
-        satellite_org_activation_key: "{{ act_key_satellite }}"
-    - name: Instalando paquetes para satellite
-      yum:
-        name: "katello-agent"
-    - name: Habilitando servicio goferd para satellite
-      shell: |
-        systemctl start goferd
-        systemctl enable goferd
-    - name: Desabilitando repositorios de más
-      shell: |
-        subscription-manager repos --disable="*"
-    - name: Habilitando repositorios adecuados
-      shell: |
-        subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms"
-    - name: Verificando actualizaciones (yum)
-      yum: list=updates update_cache=true
-      register: yumoutput
-    - name: Actualizando paquetes
-      yum:
-        name: '*'
-        state: latest
-    - name: Instalando paquetes
-      yum:
-        name: "{{ packages }}"
-      vars:
-        packages:
-        - nfs-utils
-        - rpcbind
-    - name: Creando carpetas registry, logging, metrics
-      shell: |
-        mkdir -p /var/export/registry
-        mkdir -p /var/export/logging
-        mkdir -p /var/export/metrics
-        chown -R nfsnobody:nfsnobody /var/export/
-        chmod -R 700 /var/export/
-    - name: Configurando NFS (1/3)
-      shell: |
-        setsebool -P virt_use_nfs=true
-        setsebool -P virt_sandbox_use_nfs=true
-        firewall-cmd --reload
-        chown -R nfsnobody:nfsnobody /var/export/
-        chmod -R 700 /var/export/
-    - name: Configurando NFS (2/3)
-      shell:
-        cmd: |
-          cat > /etc/exports.d/ocp.exports << EOF
-          /var/export/metrics *(rw,async,root_squash)
-          /var/export/registry *(rw,async,root_squash)
-          /var/export/logging *(rw,async,root_squash)
-          EOF
-    - name: Configurando NFS (3/3)
-      shell:
-        cmd: |
-          exportfs -a
-          systemctl restart nfs-server.service nfs.service
-          showmount -e
 ...

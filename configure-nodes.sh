@@ -31,7 +31,7 @@ if [[ -f "$cfg_path_inventory" ]]; then
         fi
     fi
     else 
-        abortOnEecho -e "\e[91mInventory not found, verify config path"
+        echo "$cfg_path_inventory"
+        echo -e "\e[91mInventory not found, verify config path"
         echo -e "\e[39m"
-        abortOnErrorrror
 fi
